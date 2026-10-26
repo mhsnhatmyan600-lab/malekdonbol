@@ -22,8 +22,20 @@
     <style>
         body { font-family: 'Vazirmatn', sans-serif; background-color: #f5f5f5; color: #3f4064; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
         .scrollbar-none::-webkit-scrollbar { display: none; }
+        
+        /* استایل برای عکس‌های پیش‌فرض محصولات */
+        .product-icon { 
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 3.5rem; 
+            background-color: #f9f9f9; 
+            border-radius: 8px;
+        }
+        .modal-bg { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -45,7 +57,7 @@
 
             <!-- دکمه‌های سمت چپ -->
             <div class="flex items-center gap-4">
-                <button class="hidden md:flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
+                <button onclick="openRegisterModal()" class="hidden md:flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
                     <i class="fa-regular fa-user text-gray-500"></i>
                     <span>ورود | ثبت نام</span>
                 </button>
@@ -109,7 +121,7 @@
         <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
     </main>
 
-    <!-- سبد خرید -->
+    <!-- سبد خرید (کشو) -->
     <div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
         <div id="cartOverlay" onclick="toggleCartDrawer()" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300"></div>
         <div class="absolute inset-y-0 left-0 max-w-full w-80 bg-white shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300" id="cartPanel">
@@ -125,34 +137,44 @@
         </div>
     </div>
 
+    <!-- مودال ثبت‌نام -->
+    <div id="registerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center modal-bg">
+        <div class="bg-white rounded-2xl p-6 w-80 shadow-2xl relative">
+            <button onclick="closeRegisterModal()" class="absolute top-4 left-4 text-gray-400"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-center mb-4">ورود / ثبت‌نام</h3>
+            <p class="text-xs text-gray-500 text-center mb-4">برای ثبت سفارش وارد حساب خود شوید</p>
+            <form onsubmit="handleRegister(event)">
+                <input type="text" placeholder="شماره موبایل" class="w-full bg-[#f5f5f5] border border-gray-200 rounded-lg py-2 px-3 text-sm mb-3 focus:outline-none focus:border-dk-red">
+                <button type="submit" class="w-full bg-dk-red text-white font-bold py-2 rounded-lg text-sm mb-2">دریافت کد تایید</button>
+            </form>
+        </div>
+    </div>
+
     <footer class="bg-white border-t py-6 text-center text-xs text-gray-500">
         <p>© ۱۴۰۳ تمامی حقوق برای دیجی‌کالا (نسخه آزمایشی) محفوظ است.</p>
     </footer>
 
     <script>
-        // تابع تولید عکس‌های رندوم از سرویس‌های معتبر برای دیجی‌کالا
-        function getImg(id) {
-            return `https://picsum.photos/400/400?random=${id}`;
-        }
+        // آیکون‌هایی که به جای عکس استفاده می‌شوند (تضمینی لود می‌شن)
+        const productIcons = ["📱", "💻", "🎧", "⌚", "🎮", "📷", "📺", "🔋", "🖱️", "⌨️", "💾", "🔌", "🔊", "🎤", "🖥️", "📱"];
 
-        // دیتای ۱۶ محصول برای فروشگاه
         const products = [
-            { id: 1, title: 'گوشی موبایل سامسونگ گلکسی S24', price: 45000000, old: 48000000, rating: 4.8, reviews: 1200, img: getImg(1), badge: 'شگفت‌انگیز' },
-            { id: 2, title: 'لپ‌تاپ ایسوس مدل ROG Strix', price: 68000000, old: 72000000, rating: 4.9, reviews: 850, img: getImg(2), badge: 'شگفت‌انگیز' },
-            { id: 3, title: 'هدفون بی‌سیم اپل ایرپادز پرو', price: 8500000, old: 9200000, rating: 4.7, reviews: 3200, img: getImg(3), badge: 'شگفت‌انگیز' },
-            { id: 4, title: 'ساعت هوشمند اپل واچ سری 9', price: 22000000, old: 24000000, rating: 4.6, reviews: 540, img: getImg(4), badge: 'شگفت‌انگیز' },
-            { id: 5, title: 'کنسول بازی پلی استیشن 5 اسلیم', price: 35000000, old: 38000000, rating: 4.9, reviews: 2100, img: getImg(5), badge: 'شگفت‌انگیز' },
-            { id: 6, title: 'دوربین بدون آینه سونی Alpha A7', price: 120000000, old: 125000000, rating: 4.8, reviews: 320, img: getImg(6), badge: 'شگفت‌انگیز' },
-            { id: 7, title: 'تلویزیون هوشمند ال جی 55 اینچ', price: 42000000, old: 45000000, rating: 4.5, reviews: 780, img: getImg(7), badge: '' },
-            { id: 8, title: 'پایه نگهدارنده موبایل مگ‌سیف', price: 850000, old: 1100000, rating: 4.4, reviews: 150, img: getImg(8), badge: '' },
-            { id: 9, title: 'کیبورد مکانیکال گیمینگ ریزر', price: 4500000, old: 5200000, rating: 4.7, reviews: 620, img: getImg(9), badge: '' },
-            { id: 10, title: 'ماوس بی‌سیم لاجیتک MX Master 3', price: 5800000, old: 6100000, rating: 4.8, reviews: 910, img: getImg(10), badge: '' },
-            { id: 11, title: 'پاوربانک انکر 20000 میلی‌آمپر', price: 2200000, old: 2500000, rating: 4.6, reviews: 1800, img: getImg(11), badge: '' },
-            { id: 12, title: 'هارد اکسترنال وسترن دیجیتال 2TB', price: 6500000, old: 7000000, rating: 4.5, reviews: 430, img: getImg(12), badge: '' },
-            { id: 13, title: 'تبلت سامسونگ گلکسی تب S9', price: 28000000, old: 30000000, rating: 4.7, reviews: 290, img: getImg(13), badge: '' },
-            { id: 14, title: 'اسپیکر بلوتوثی JBL Charge 5', price: 4800000, old: 5200000, rating: 4.8, reviews: 1400, img: getImg(14), badge: '' },
-            { id: 15, title: 'میکروفون استریمینگ هایپرایکس', price: 3800000, old: 4100000, rating: 4.4, reviews: 210, img: getImg(15), badge: '' },
-            { id: 16, title: 'مانیتور گیمینگ 27 اینچ ایسوس', price: 18500000, old: 20000000, rating: 4.6, reviews: 670, img: getImg(16), badge: '' }
+            { id: 1, title: 'گوشی موبایل سامسونگ گلکسی S24', price: 45000000, old: 48000000, rating: 4.8, reviews: 1200, icon: "📱", badge: 'شگفت‌انگیز' },
+            { id: 2, title: 'لپ‌تاپ ایسوس مدل ROG Strix', price: 68000000, old: 72000000, rating: 4.9, reviews: 850, icon: "💻", badge: 'شگفت‌انگیز' },
+            { id: 3, title: 'هدفون بی‌سیم اپل ایرپادز پرو', price: 8500000, old: 9200000, rating: 4.7, reviews: 3200, icon: "🎧", badge: 'شگفت‌انگیز' },
+            { id: 4, title: 'ساعت هوشمند اپل واچ سری 9', price: 22000000, old: 24000000, rating: 4.6, reviews: 540, icon: "⌚", badge: 'شگفت‌انگیز' },
+            { id: 5, title: 'کنسول بازی پلی استیشن 5 اسلیم', price: 35000000, old: 38000000, rating: 4.9, reviews: 2100, icon: "🎮", badge: 'شگفت‌انگیز' },
+            { id: 6, title: 'دوربین بدون آینه سونی Alpha A7', price: 120000000, old: 125000000, rating: 4.8, reviews: 320, icon: "📷", badge: 'شگفت‌انگیز' },
+            { id: 7, title: 'تلویزیون هوشمند ال جی 55 اینچ', price: 42000000, old: 45000000, rating: 4.5, reviews: 780, icon: "📺", badge: '' },
+            { id: 8, title: 'پایه نگهدارنده موبایل مگ‌سیف', price: 850000, old: 1100000, rating: 4.4, reviews: 150, icon: "📱", badge: '' },
+            { id: 9, title: 'کیبورد مکانیکال گیمینگ ریزر', price: 4500000, old: 5200000, rating: 4.7, reviews: 620, icon: "⌨️", badge: '' },
+            { id: 10, title: 'ماوس بی‌سیم لاجیتک MX Master 3', price: 5800000, old: 6100000, rating: 4.8, reviews: 910, icon: "🖱️", badge: '' },
+            { id: 11, title: 'پاوربانک انکر 20000 میلی‌آمپر', price: 2200000, old: 2500000, rating: 4.6, reviews: 1800, icon: "🔋", badge: '' },
+            { id: 12, title: 'هارد اکسترنال وسترن دیجیتال 2TB', price: 6500000, old: 7000000, rating: 4.5, reviews: 430, icon: "💾", badge: '' },
+            { id: 13, title: 'تبلت سامسونگ گلکسی تب S9', price: 28000000, old: 30000000, rating: 4.7, reviews: 290, icon: "📱", badge: '' },
+            { id: 14, title: 'اسپیکر بلوتوثی JBL Charge 5', price: 4800000, old: 5200000, rating: 4.8, reviews: 1400, icon: "🔊", badge: '' },
+            { id: 15, title: 'میکروفون استریمینگ هایپرایکس', price: 3800000, old: 4100000, rating: 4.4, reviews: 210, icon: "🎤", badge: '' },
+            { id: 16, title: 'مانیتور گیمینگ 27 اینچ ایسوس', price: 18500000, old: 20000000, rating: 4.6, reviews: 670, icon: "🖥️", badge: '' }
         ];
 
         let cart = [];
@@ -171,8 +193,8 @@
                 return `
                     <div class="bg-white rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between p-3 border border-gray-100 group">
                         <div>
-                            <div class="relative aspect-square overflow-hidden rounded-lg bg-gray-50 mb-3">
-                                <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <div class="relative aspect-square overflow-hidden rounded-lg mb-3">
+                                <div class="product-icon">${p.icon}</div>
                                 ${discount > 0 ? `<span class="absolute top-2 right-2 bg-dk-red text-white text-[10px] font-bold px-2 py-1 rounded">${toPersianDigits(discount)}٪</span>` : ''}
                             </div>
                             <h3 class="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 h-10 leading-5">${p.title}</h3>
@@ -263,7 +285,7 @@
 
             cartItemsContainer.innerHTML = cart.map(item => `
                 <div class="flex gap-3 items-center">
-                    <img src="${item.img}" class="w-14 h-14 rounded-lg object-cover border">
+                    <div class="w-14 h-14 rounded-lg flex items-center justify-center bg-gray-50 text-2xl border">${item.icon}</div>
                     <div class="flex-1">
                         <p class="text-xs font-bold line-clamp-1">${item.title}</p>
                         <span class="text-xs text-gray-500">${formatPrice(item.price)}</span>
@@ -283,6 +305,21 @@
             cart = [];
             updateCartUI();
             toggleCartDrawer(false);
+        }
+
+        // مودال ثبت‌نام
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.remove('hidden');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.add('hidden');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            alert('کد تایید برای شما پیامک شد (نمونه)');
+            closeRegisterModal();
         }
 
         // اجرای اولیه
