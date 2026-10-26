@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دیجی‌کالا | فروشگاه اینترنتی</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'] },
+                    colors: {
+                        dk: { red: '#ef4056', dark: '#3f4064', gray: '#f0f0f1', text: '#62666d' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f5f5f5; color: #3f4064; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- هدر دیجی‌کالا -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- لوگو -->
+            <div class="flex items-center gap-2">
+                <div class="text-dk-red font-black text-3xl tracking-tighter">DigiKala</div>
+            </div>
+
+            <!-- نوار جستجو -->
+            <div class="flex-1 max-w-2xl relative">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="جستجو در همه کالاها..." 
+                       class="w-full bg-[#f0f0f1] border-none rounded-lg py-2.5 pr-11 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-dk-red/20 transition">
+                <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-gray-400"></i>
+            </div>
+
+            <!-- دکمه‌های سمت چپ -->
+            <div class="flex items-center gap-4">
+                <button class="hidden md:flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-user text-gray-500"></i>
+                    <span>ورود | ثبت نام</span>
+                </button>
+                <button onclick="toggleCartDrawer()" class="relative p-2 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-cart-shopping text-xl text-gray-600"></i>
+                    <span id="cartBadge" class="hidden absolute top-0 right-0 bg-dk-red text-white text-[10px] font-bold w-4 h-4 rounded-full items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- بنر بالای صفحه -->
+    <section class="max-w-7xl mx-auto px-4 py-4 w-full">
+        <div class="bg-gradient-to-l from-dk-red to-red-600 rounded-2xl p-6 sm:p-10 text-white flex items-center justify-between shadow-lg">
+            <div class="space-y-2">
+                <h1 class="text-2xl sm:text-3xl font-bold">فروشگاه اینترنتی دیجی‌کالا</h1>
+                <p class="text-red-100 text-sm">خرید آنلاین با ارسال سریع و ضمانت اصالت کالا</p>
+            </div>
+            <div class="hidden sm:flex gap-2">
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">ارسال رایگان</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">۷ روز ضمانت</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- دسته بندی‌های آیکون‌دار -->
+    <section class="max-w-7xl mx-auto px-4 py-4 w-full">
+        <div class="bg-white rounded-2xl p-4 flex justify-between items-center overflow-x-auto scrollbar-none gap-6">
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-mobile-screen text-2xl text-gray-400"></i><span>موبایل</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-laptop text-2xl text-gray-400"></i><span>لپ‌تاپ</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-headphones text-2xl text-gray-400"></i><span>هدفون</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-clock text-2xl text-gray-400"></i><span>ساعت</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-gamepad text-2xl text-gray-400"></i><span>کنسول بازی</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-camera text-2xl text-gray-400"></i><span>دوربین</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 text-xs text-gray-600 hover:text-dk-red cursor-pointer">
+                <i class="fa-solid fa-tv text-2xl text-gray-400"></i><span>تلویزیون</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- عنوان محصولات -->
+    <div class="max-w-7xl mx-auto px-4 w-full flex justify-between items-center mb-2">
+        <h2 class="text-lg font-bold">پیشنهاد شگفت‌انگیز</h2>
+        <span class="text-dk-red text-sm cursor-pointer">مشاهده همه <i class="fa-solid fa-angle-left text-xs"></i></span>
+    </div>
+
+    <!-- گريد محصولات -->
+    <main class="max-w-7xl mx-auto px-4 pb-12 flex-1 w-full">
+        <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+    </main>
+
+    <!-- سبد خرید -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
+        <div id="cartOverlay" onclick="toggleCartDrawer()" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+        <div class="absolute inset-y-0 left-0 max-w-full w-80 bg-white shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300" id="cartPanel">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold">سبد خرید شما</h3>
+                <button onclick="toggleCartDrawer()" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+            <div class="p-4 border-t space-y-3">
+                <div class="flex justify-between text-sm"><span>مبلغ قابل پرداخت:</span><span id="cartTotalPrice" class="font-bold text-dk-red">۰ تومان</span></div>
+                <button onclick="checkout()" class="w-full bg-dk-red text-white font-bold py-2 rounded-lg text-sm">ثبت سفارش</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t py-6 text-center text-xs text-gray-500">
+        <p>© ۱۴۰۳ تمامی حقوق برای دیجی‌کالا (نسخه آزمایشی) محفوظ است.</p>
+    </footer>
+
+    <script>
+        // تابع تولید عکس‌های رندوم از سرویس‌های معتبر برای دیجی‌کالا
+        function getImg(id) {
+            return `https://picsum.photos/400/400?random=${id}`;
+        }
+
+        // دیتای ۱۶ محصول برای فروشگاه
+        const products = [
+            { id: 1, title: 'گوشی موبایل سامسونگ گلکسی S24', price: 45000000, old: 48000000, rating: 4.8, reviews: 1200, img: getImg(1), badge: 'شگفت‌انگیز' },
+            { id: 2, title: 'لپ‌تاپ ایسوس مدل ROG Strix', price: 68000000, old: 72000000, rating: 4.9, reviews: 850, img: getImg(2), badge: 'شگفت‌انگیز' },
+            { id: 3, title: 'هدفون بی‌سیم اپل ایرپادز پرو', price: 8500000, old: 9200000, rating: 4.7, reviews: 3200, img: getImg(3), badge: 'شگفت‌انگیز' },
+            { id: 4, title: 'ساعت هوشمند اپل واچ سری 9', price: 22000000, old: 24000000, rating: 4.6, reviews: 540, img: getImg(4), badge: 'شگفت‌انگیز' },
+            { id: 5, title: 'کنسول بازی پلی استیشن 5 اسلیم', price: 35000000, old: 38000000, rating: 4.9, reviews: 2100, img: getImg(5), badge: 'شگفت‌انگیز' },
+            { id: 6, title: 'دوربین بدون آینه سونی Alpha A7', price: 120000000, old: 125000000, rating: 4.8, reviews: 320, img: getImg(6), badge: 'شگفت‌انگیز' },
+            { id: 7, title: 'تلویزیون هوشمند ال جی 55 اینچ', price: 42000000, old: 45000000, rating: 4.5, reviews: 780, img: getImg(7), badge: '' },
+            { id: 8, title: 'پایه نگهدارنده موبایل مگ‌سیف', price: 850000, old: 1100000, rating: 4.4, reviews: 150, img: getImg(8), badge: '' },
+            { id: 9, title: 'کیبورد مکانیکال گیمینگ ریزر', price: 4500000, old: 5200000, rating: 4.7, reviews: 620, img: getImg(9), badge: '' },
+            { id: 10, title: 'ماوس بی‌سیم لاجیتک MX Master 3', price: 5800000, old: 6100000, rating: 4.8, reviews: 910, img: getImg(10), badge: '' },
+            { id: 11, title: 'پاوربانک انکر 20000 میلی‌آمپر', price: 2200000, old: 2500000, rating: 4.6, reviews: 1800, img: getImg(11), badge: '' },
+            { id: 12, title: 'هارد اکسترنال وسترن دیجیتال 2TB', price: 6500000, old: 7000000, rating: 4.5, reviews: 430, img: getImg(12), badge: '' },
+            { id: 13, title: 'تبلت سامسونگ گلکسی تب S9', price: 28000000, old: 30000000, rating: 4.7, reviews: 290, img: getImg(13), badge: '' },
+            { id: 14, title: 'اسپیکر بلوتوثی JBL Charge 5', price: 4800000, old: 5200000, rating: 4.8, reviews: 1400, img: getImg(14), badge: '' },
+            { id: 15, title: 'میکروفون استریمینگ هایپرایکس', price: 3800000, old: 4100000, rating: 4.4, reviews: 210, img: getImg(15), badge: '' },
+            { id: 16, title: 'مانیتور گیمینگ 27 اینچ ایسوس', price: 18500000, old: 20000000, rating: 4.6, reviews: 670, img: getImg(16), badge: '' }
+        ];
+
+        let cart = [];
+
+        function formatPrice(price) { return new Intl.NumberFormat('fa-IR').format(price) + ' تومان'; }
+        function toPersianDigits(n) { return n.toString().replace(/\d/g, x => '۰۱۲۳۴۵۶۷۸۹'[x]); }
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">محصولی یافت نشد.</div>`;
+                return;
+            }
+            grid.innerHTML = items.map(p => {
+                const discount = Math.round(((p.old - p.price) / p.old) * 100);
+                return `
+                    <div class="bg-white rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between p-3 border border-gray-100 group">
+                        <div>
+                            <div class="relative aspect-square overflow-hidden rounded-lg bg-gray-50 mb-3">
+                                <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                ${discount > 0 ? `<span class="absolute top-2 right-2 bg-dk-red text-white text-[10px] font-bold px-2 py-1 rounded">${toPersianDigits(discount)}٪</span>` : ''}
+                            </div>
+                            <h3 class="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 h-10 leading-5">${p.title}</h3>
+                            <div class="flex items-center gap-1 mt-2 text-xs text-gray-400">
+                                <i class="fa-solid fa-star text-amber-400"></i>
+                                <span>${toPersianDigits(p.rating)}</span>
+                                <span>(${toPersianDigits(p.reviews)})</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            ${p.old > p.price ? `<span class="text-xs text-gray-400 line-through block">${formatPrice(p.old)}</span>` : ''}
+                            <span class="text-sm font-bold text-gray-800">${formatPrice(p.price)}</span>
+                            <button onclick="addToCart(${p.id})" class="mt-2 w-full bg-[#f0f0f1] hover:bg-dk-red hover:text-white text-gray-700 font-semibold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-cart-plus"></i> افزودن به سبد
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const filtered = products.filter(p => p.title.toLowerCase().includes(q));
+            renderProducts(filtered);
+        }
+
+        function toggleCartDrawer(open = null) {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            const panel = document.getElementById('cartPanel');
+            const isOpening = open !== null ? open : drawer.classList.contains('invisible');
+
+            if (isOpening) {
+                drawer.classList.remove('invisible');
+                setTimeout(() => {
+                    overlay.classList.add('opacity-100');
+                    panel.classList.remove('-translate-x-full');
+                }, 10);
+            } else {
+                overlay.classList.remove('opacity-100');
+                panel.classList.add('-translate-x-full');
+                setTimeout(() => {
+                    drawer.classList.add('invisible');
+                }, 300);
+            }
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const item = cart.find(c => c.id === id);
+            if (item) item.quantity++;
+            else cart.push({ ...product, quantity: 1 });
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(c => c.id === id);
+            if (!item) return;
+            item.quantity += change;
+            if (item.quantity <= 0) cart = cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const cartItemsContainer = document.getElementById('cartItems');
+            const totalPriceEl = document.getElementById('cartTotalPrice');
+            
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            if (totalCount > 0) {
+                badge.textContent = toPersianDigits(totalCount);
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+            }
+            totalPriceEl.textContent = formatPrice(totalPrice);
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<div class="text-center text-gray-400 py-10"><i class="fa-solid fa-cart-shopping text-4xl mb-2 opacity-50"></i><br>سبد خرید خالی است.</div>`;
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex gap-3 items-center">
+                    <img src="${item.img}" class="w-14 h-14 rounded-lg object-cover border">
+                    <div class="flex-1">
+                        <p class="text-xs font-bold line-clamp-1">${item.title}</p>
+                        <span class="text-xs text-gray-500">${formatPrice(item.price)}</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                        <button onclick="updateQuantity(${item.id}, 1)" class="text-dk-red font-bold w-5">+</button>
+                        <span class="text-xs font-bold">${toPersianDigits(item.quantity)}</span>
+                        <button onclick="updateQuantity(${item.id}, -1)" class="text-gray-500 w-5">-</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function checkout() {
+            if (cart.length === 0) return alert('سبد خرید شما خالی است!');
+            alert('سفارش شما با موفقیت ثبت شد (نسخه آزمایشی).');
+            cart = [];
+            updateCartUI();
+            toggleCartDrawer(false);
+        }
+
+        // اجرای اولیه
+        renderProducts(products);
+    </script>
+</body>
+</html>
